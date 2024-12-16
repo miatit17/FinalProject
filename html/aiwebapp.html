@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            text-align: center;
+        }
+        .row {
+            display: flex;
+            justify-content: center;
+            margin: 5px 0;
+        }
+        .tile {
+            width: 50px;
+            height: 50px;
+            margin: 0 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            border: 2px solid #ccc;
+            background-color: #fff;
+        }
+        .tile.correct {
+            background-color: #6aaa64;
+            color: #fff;
+            border-color: #6aaa64;
+        }
+        .tile.present {
+            background-color: #c9b458;
+            color: #fff;
+            border-color: #c9b458;
+        }
+        .tile.absent {
+            background-color: #787c7e;
+            color: #fff;
+            border-color: #787c7e;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 18px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ms-auto py-4 py-lg-0">
+            <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../index.html">Resume</a></li>
+            <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="scratch.html">The Magic of
+                    Musicals</a></li>
+            <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="aiwebapp.html">Fun Game</a></li>
+        </ul>
+    </div>
+    <div class="container">
+        <h1>Wordle Game</h1>
+        <div id="board"></div>
+        <input type="text" id="guessInput" placeholder="Enter your guess" maxlength="5">
+        <button onclick="submitGuess()">Submit</button>
+        <button id="newWordButton" onclick="newWord()" style="display: none;">New Word</button>
+        <p id="message"></p>
+    </div>
+    <script>
+        let solution = 'APPLE'; // You can change the solution here
+        let currentRow = 0;
+        const board = document.getElementById('board');
+        const message = document.getElementById('message');
+
+        // Initialize the board
+        function initializeBoard() {
+            board.innerHTML = '';
+            for (let i = 0; i < 6; i++) {
+                const row = document.createElement('div');
+                row.classList.add('row');
+                for (let j = 0; j < 5; j++) {
+                    const tile = document.createElement('div');
+                    tile.classList.add('tile');
+                    row.appendChild(tile);
+                }
+                board.appendChild(row);
+            }
+        }
+
+        function submitGuess() {
+            const guessInput = document.getElementById('guessInput');
+            const guess = guessInput.value.toUpperCase();
+            if (guess.length !== 5) {
+                message.textContent = 'Guess must be 5 letters.';
+                return;
+            }
+            const row = board.children[currentRow];
+            for (let i = 0; i < 5; i++) {
+                const tile = row.children[i];
+                tile.textContent = guess[i];
+                if (guess[i] === solution[i]) {
+                    tile.classList.add('correct');
+                } else if (solution.includes(guess[i])) {
+                    tile.classList.add('present');
+                } else {
+                    tile.classList.add('absent');
+                }
+            }
+            currentRow++;
+            guessInput.value = '';
+            if (guess === solution) {
+                message.textContent = 'Congratulations! You guessed the word!';
+                guessInput.disabled = true;
+                document.getElementById('newWordButton').style.display = 'block';
+                return;
+            }
+            if (currentRow === 6) {
+                message.textContent = `Game Over. The word was ${solution}.`;
+                guessInput.disabled = true;
+                document.getElementById('newWordButton').style.display = 'block';
+            }
+        }
+
+        function newWord() {
+            solution = 'GRAPE'; // You can change the solution here or randomize it
+            currentRow = 0;
+            initializeBoard();
+            const guessInput = document.getElementById('guessInput');
+            guessInput.value = '';
+            guessInput.disabled = false;
+            message.textContent = '';
+            document.getElementById('newWordButton').style.display = 'none';
+        }
+
+        // Initialize the board on page load
+        initializeBoard();
+    </script>
+</body>
+</html>
